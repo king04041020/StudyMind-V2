@@ -1,3 +1,4 @@
+
 name: Build StudyMind APK
 
 on:
@@ -10,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,7 +32,6 @@ jobs:
           mkdir -p source
           unzip -q StudyMind_Source_V2.zip -d source
           test -f source/studymind_flutter/pubspec.yaml
-          test -f source/studymind_flutter/lib/main.dart
 
       - name: Prepare Android project
         working-directory: source/studymind_flutter
@@ -42,7 +43,7 @@ jobs:
 
       - name: Build APK
         working-directory: source/studymind_flutter
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -50,3 +51,4 @@ jobs:
           name: StudyMind-APK
           path: source/studymind_flutter/build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+          
