@@ -5,8 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'main.dart'
-      - 'pubspec.yaml'
+      - 'StudyMind_Source_V2.zip'
       - '.github/workflows/build-apk.yml'
 
 jobs:
@@ -28,19 +27,29 @@ jobs:
         with:
           channel: stable
 
+      - name: Extract source archive
+        run: |
+          mkdir -p source
+          unzip -q StudyMind_Source_V2.zip -d source
+          test -f source/studymind_flutter/pubspec.yaml
+          test -f source/studymind_flutter/lib/main.dart
+
       - name: Prepare Android project
+        working-directory: source/studymind_flutter
         run: flutter create --platforms=android --project-name=studymind .
 
       - name: Get dependencies
+        working-directory: source/studymind_flutter
         run: flutter pub get
 
       - name: Build APK
+        working-directory: source/studymind_flutter
         run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: StudyMind-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: source/studymind_flutter/build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
           
